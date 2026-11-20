@@ -1,0 +1,23 @@
+# Byte-compiled / cache
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+
+# Secrets & session files
+.env
+*.session
+*.session-journal
+*.sqlite3
+
+# Temporary media files
+/tmp/
+temp/
+*.mp4
+*.mkv
+*.jpg
