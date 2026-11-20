@@ -1,0 +1,83 @@
+{
+  "name": "wtermarktgbot",
+  "description": "Telegram video watermark bot using Pyrofork and FFmpeg.",
+  "repository": "https://github.com/REPLACE_WITH_GITHUB_USERNAME/REPLACE_WITH_REPOSITORY",
+  "keywords": [
+    "telegram",
+    "bot",
+    "ffmpeg",
+    "watermark",
+    "video",
+    "pyrogram",
+    "pyrofork",
+    "python"
+  ],
+  "stack": "heroku-24",
+  "buildpacks": [
+    {
+      "url": "https://github.com/jonathanong/heroku-buildpack-ffmpeg-latest.git"
+    },
+    {
+      "url": "heroku/python"
+    }
+  ],
+  "env": {
+    "API_ID": {
+      "description": "Telegram API ID from https://my.telegram.org",
+      "required": true
+    },
+    "API_HASH": {
+      "description": "Telegram API hash from https://my.telegram.org",
+      "required": true
+    },
+    "BOT_TOKEN": {
+      "description": "Bot token from @BotFather",
+      "required": true
+    },
+    "OWNER_ID": {
+      "description": "Numeric Telegram user ID of the bot owner",
+      "required": true
+    },
+    "MONGO_URI": {
+      "description": "Optional MongoDB connection URI. Leave blank to use SQLite.",
+      "required": false,
+      "value": ""
+    },
+    "DB_NAME": {
+      "description": "MongoDB database name",
+      "required": false,
+      "value": "watermark_bot"
+    },
+    "LOG_CHANNEL": {
+      "description": "Optional Telegram channel ID for job logs; use 0 to disable",
+      "required": false,
+      "value": "0"
+    },
+    "FORCE_SUB_CHANNEL": {
+      "description": "Optional required channel username, e.g. @MyChannel",
+      "required": false,
+      "value": ""
+    },
+    "MAX_CONCURRENT_JOBS": {
+      "description": "Maximum simultaneous video encoding jobs",
+      "required": false,
+      "value": "1"
+    },
+    "MAX_USER_QUEUE": {
+      "description": "Maximum queued/active jobs per user",
+      "required": false,
+      "value": "2"
+    },
+    "MIN_FREE_DISK_MB": {
+      "description": "Minimum free disk space reserve in MB",
+      "required": false,
+      "value": "250"
+    }
+  },
+  "formation": {
+    "worker": {
+      "quantity": 1,
+      "size": "basic"
+    }
+  }
+}
