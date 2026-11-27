@@ -38,6 +38,10 @@ class Config:
     LOG_CHANNEL: int = _get_int("LOG_CHANNEL", 0)
     FORCE_SUB_CHANNEL: str = os.getenv("FORCE_SUB_CHANNEL", "").strip()
 
+    # Features & Cleanups
+    # Time in seconds to delete processed videos from Telegram (e.g., 600 = 10 min, 1200 = 20 min). 0 disables auto-delete.
+    AUTO_DELETE_TIME: int = _get_int("AUTO_DELETE_TIME", 600) 
+
     # Queue & Resource Limits
     MAX_CONCURRENT_JOBS: int = max(1, _get_int("MAX_CONCURRENT_JOBS", 1))
     MAX_USER_QUEUE: int = max(1, _get_int("MAX_USER_QUEUE", 2))
