@@ -34,6 +34,9 @@ class VideoJob:
     ffmpeg_process: asyncio.subprocess.Process | None = None
     temp_dir: Path | None = None
     is_running: bool = False
+    
+    # NEW: Store the final uploaded video message here so the queue can auto-delete it later
+    final_message: Message | None = None
 
     def register_process(self, proc: asyncio.subprocess.Process | None) -> None:
         """Bind or clear the active FFmpeg subprocess handle."""
@@ -119,7 +122,33 @@ class JobQueueManager:
                     job.job_id,
                     job.user_id,
                 )
+                
+                # Wait for the processor (FFmpeg + Upload) to finish
                 await job.processor(job)
+
+                # ==========================================
+                # NEW AUTO-DELETE LOGIC
+                # ==========================================
+                if not job.cancel_event.is_set():
+                    # 1. Delete the user's original input message immediately after processing
+                    try:
+                        await job.source_message.delete()
+                    except Exception as e:
+                        logger.debug("Could not delete source message %s: %s", job.source_message.id, e)
+                    
+                    # 2. Schedule the bot's final output message for deletion
+                    if settings.AUTO_DELETE_TIME > 0 and job.final_message:
+                        async def delayed_delete(delay: int, msg: Message) -> None:
+                            try:
+                                await asyncio.sleep(delay)
+                                await msg.delete()
+                                logger.info("Auto-deleted output message %s", msg.id)
+                            except Exception as e:
+                                logger.debug("Auto-delete failed for message %s: %s", msg.id, e)
+                        
+                        # Runs in the background so the worker can immediately start the next job
+                        asyncio.create_task(delayed_delete(settings.AUTO_DELETE_TIME, job.final_message))
+
             except Exception as exc:
                 logger.exception("Unhandled error in worker #%d for job %s: %s", worker_id, job.job_id, exc)
             finally:
