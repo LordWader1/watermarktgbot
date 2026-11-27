@@ -165,12 +165,15 @@ def register_video_handlers(app: Client) -> None:
                 total_elapsed = time_formatter(time.monotonic() - job_start)
                 out_size = output_path.stat().st_size
 
+                # ADDED: Auto-delete notice conditionally appended to caption
                 caption = (
                     f"✅ **Watermark Applied!**\n\n"
                     f"🏷 **Text:** `{user_cfg.watermark_text}`\n"
                     f"📦 **Size:** `{humanbytes(out_size)}`\n"
                     f"⏱ **Total Time:** `{total_elapsed}`"
                 )
+                if settings.AUTO_DELETE_TIME > 0:
+                    caption += f"\n\n_🗑 This message will be deleted in {settings.AUTO_DELETE_TIME // 60} minutes._"
 
                 sent_msg = await _send_video_with_retry(
                     client=client,
@@ -187,6 +190,12 @@ def register_video_handlers(app: Client) -> None:
 
                 if job.cancel_event.is_set() or sent_msg is None:
                     raise CancelledError("Upload cancelled by user.")
+
+                # ==========================================
+                # NEW AUTO-DELETE LOGIC BINDING
+                # ==========================================
+                # Assign the successful upload to the job so the queue manager deletes it later
+                job.final_message = sent_msg
 
                 await job.status_message.delete()
 
