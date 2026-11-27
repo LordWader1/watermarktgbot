@@ -9,6 +9,18 @@ Use this badge in the README after replacing the GitHub path:
 
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://www.heroku.com/deploy?template=https://github.com/REPLACE_WITH_GITHUB_USERNAME/REPLACE_WITH_REPOSITORY)
 
+## Bot Features
+📍 Position: Your Text Positin
+
+🔠 Font Size: 24px to 120px
+
+🎨 Color: any colour
+
+💧 Opacity: 0 to 100%
+
+🎞 Mode: 📌 Static / Moving or Scrolling
+
+
 ##  Required Config Variables
 
 - `API_ID`
